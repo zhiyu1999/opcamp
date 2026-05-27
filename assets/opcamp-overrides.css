@@ -19,9 +19,31 @@ html {
   position: relative;
 }
 
+.global-backdrop,
+.global-backdrop::before,
+.global-backdrop::after,
+.hero-photo,
+.hero-photo::before,
+.hero-photo::after,
 .parallax-image,
-.footer-section > img {
-  pointer-events: none;
+.parallax-image::before,
+.parallax-image::after,
+.footer-section > img,
+.footer-section::before,
+.footer-section::after {
+  pointer-events: none !important;
+}
+
+.hero-bubble-layer,
+.bubble-arena {
+  pointer-events: auto !important;
+  z-index: 12 !important;
+}
+
+.float-bubble {
+  pointer-events: auto !important;
+  z-index: 14 !important;
+  cursor: pointer !important;
 }
 
 .parallax-image::after,
@@ -206,7 +228,12 @@ html {
   }
 
   .bubble-arena {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
     height: min(520px, 78vh) !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
   }
 
   .floating-cta {
