@@ -71,19 +71,34 @@
     document.addEventListener("keydown", handleEscape);
   }
 
+  let lastBubbleActivationAt = 0;
+
+  function activateBubble(button, event) {
+    if (!button || document.querySelector(".bubble-modal .modal-card")) return;
+
+    const now = Date.now();
+    if (now - lastBubbleActivationAt < 240) return;
+    lastBubbleActivationAt = now;
+
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    event?.stopImmediatePropagation?.();
+
+    const bubble = bubbleFromButton(button);
+    const index = bubbles.findIndex(item => item.title === button.innerText.trim());
+    const point = event?.changedTouches?.[0] || event;
+    if (point && typeof point.clientX === "number" && typeof point.clientY === "number") {
+      markBubbleHit(button, point);
+    }
+    openFallbackModal(bubble, index >= 0 ? index : bubbles.indexOf(bubble));
+  }
+
   function bindBubble(button) {
     if (button.dataset.opcampBubbleBound === "true") return;
     button.dataset.opcampBubbleBound = "true";
     button.type = "button";
-    button.addEventListener("click", function () {
-      const bubble = bubbleFromButton(button);
-      const index = bubbles.findIndex(item => item.title === button.innerText.trim());
-
-      window.setTimeout(function () {
-        if (!document.querySelector(".bubble-modal .modal-card")) {
-          openFallbackModal(bubble, index >= 0 ? index : bubbles.indexOf(bubble));
-        }
-      }, 80);
+    button.addEventListener("click", function (event) {
+      activateBubble(button, event);
     });
   }
 
@@ -114,31 +129,26 @@
     makePopSparks(point.clientX, point.clientY);
   }
 
-  function handlePointActivation(event) {
-    if (event.defaultPrevented || document.querySelector(".bubble-modal .modal-card")) return;
-
-    const point = event.changedTouches?.[0] || event;
-    if (typeof point.clientX !== "number" || typeof point.clientY !== "number") return;
-
-    const button = event.target.closest?.(".float-bubble") || findBubbleAtPoint(point.clientX, point.clientY);
-    if (!button) return;
-
-    event.preventDefault?.();
-    event.stopPropagation?.();
-    markBubbleHit(button, point);
-
-    const bubble = bubbleFromButton(button);
-    const index = bubbles.findIndex(item => item.title === button.innerText.trim());
-
-    window.setTimeout(function () {
-      if (!document.querySelector(".bubble-modal .modal-card")) {
-        openFallbackModal(bubble, index >= 0 ? index : bubbles.indexOf(bubble));
-      }
-    }, 80);
-  }
-
   function bindAllBubbles() {
     document.querySelectorAll(".float-bubble").forEach(bindBubble);
+    document.querySelectorAll(".bubble-arena, .hero-bubble-layer").forEach(bindBubbleActivationArea);
+  }
+
+  function bindBubbleActivationArea(area) {
+    if (area.dataset.opcampActivationBound === "true") return;
+    area.dataset.opcampActivationBound = "true";
+
+    function handleAreaActivation(event) {
+      const point = event.changedTouches?.[0] || event;
+      if (typeof point.clientX !== "number" || typeof point.clientY !== "number") return;
+
+      const button = event.target.closest?.(".float-bubble") || findBubbleAtPoint(point.clientX, point.clientY);
+      if (button && area.contains(button)) activateBubble(button, event);
+    }
+
+    area.addEventListener("pointerup", handleAreaActivation);
+    area.addEventListener("touchend", handleAreaActivation);
+    area.addEventListener("click", handleAreaActivation);
   }
 
   let hoverBubble = null;
@@ -426,8 +436,8 @@
           <p>${copy.footer.body}</p>
           <div class="join-grid">${copy.footer.join.map((item, index) => `<article><span>0${index + 1}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join("")}</div>
           <div class="button-row centered">
-            <a class="site-button primary" href="https://hcn9m5eta0s5.feishu.cn/share/base/form/shrcnf03FAZqhlNjgvKGUrkmuuf">${copy.footer.buttons[0]}</a>
-            <a class="site-button" href="https://hcn9m5eta0s5.feishu.cn/share/base/form/shrcnf03FAZqhlNjgvKGUrkmuuf">${copy.footer.buttons[1]}</a>
+            <a class="site-button primary" href="https://hcn9m5eta0s5.feishu.cn/share/base/form/shrcnf03FAZqhlNjgvKGUrkmuuf" target="_blank" rel="noopener noreferrer">${copy.footer.buttons[0]}</a>
+            <a class="site-button" href="https://hcn9m5eta0s5.feishu.cn/share/base/form/shrcnf03FAZqhlNjgvKGUrkmuuf" target="_blank" rel="noopener noreferrer">${copy.footer.buttons[1]}</a>
           </div>
           <p class="partners">${copy.footer.partners}</p>
           <p class="copyright">© 2026 汤泉 OPCamp · LIANGZHU</p>
@@ -577,6 +587,8 @@
       });
       updateCards(".footer-section .button-row a", copy.footer.buttons, (button, item) => {
         setText(button, item);
+        button.setAttribute("target", "_blank");
+        button.setAttribute("rel", "noopener noreferrer");
       });
       setText(footer.querySelector(".partners"), copy.footer.partners);
     }
@@ -588,12 +600,6 @@
   document.addEventListener("DOMContentLoaded", bindAllBubbles);
   document.addEventListener("DOMContentLoaded", bindShootHover);
   document.addEventListener("DOMContentLoaded", applyCopyUpdates);
-  document.addEventListener("click", handlePointActivation, true);
-  document.addEventListener("pointerup", handlePointActivation, true);
-  document.addEventListener("touchend", handlePointActivation, true);
-  window.addEventListener("click", handlePointActivation, true);
-  window.addEventListener("pointerup", handlePointActivation, true);
-  window.addEventListener("touchend", handlePointActivation, true);
 
   let updateQueued = false;
   let fallbackTimer = 0;
