@@ -108,6 +108,12 @@
     return null;
   }
 
+  function markBubbleHit(button, point) {
+    button.classList.add("opcamp-hit");
+    window.setTimeout(() => button.classList.remove("opcamp-hit"), 420);
+    makePopSparks(point.clientX, point.clientY);
+  }
+
   function handlePointActivation(event) {
     if (event.defaultPrevented || document.querySelector(".bubble-modal .modal-card")) return;
 
@@ -119,6 +125,7 @@
 
     event.preventDefault?.();
     event.stopPropagation?.();
+    markBubbleHit(button, point);
 
     const bubble = bubbleFromButton(button);
     const index = bubbles.findIndex(item => item.title === button.innerText.trim());
@@ -134,7 +141,88 @@
     document.querySelectorAll(".float-bubble").forEach(bindBubble);
   }
 
+  let hoverBubble = null;
+  let bubbleCursor = null;
+
+  function getBubbleCursor() {
+    if (bubbleCursor) return bubbleCursor;
+
+    bubbleCursor = document.createElement("div");
+    bubbleCursor.className = "opcamp-bubble-cursor";
+    bubbleCursor.setAttribute("aria-hidden", "true");
+    bubbleCursor.innerHTML = [
+      '<img src="/images/bubble-pop-gun-icon.png" alt="">',
+      '<span class="cursor-primary">击碎泡泡</span>',
+      '<span class="cursor-secondary">查看更多细节</span>'
+    ].join("");
+    document.body.appendChild(bubbleCursor);
+    return bubbleCursor;
+  }
+
+  function moveBubbleCursor(event) {
+    if (!hoverBubble || !event || typeof event.clientX !== "number") return;
+
+    const cursor = getBubbleCursor();
+    cursor.style.transform = `translate3d(${event.clientX + 18}px, ${event.clientY + 18}px, 0) rotate(-4deg) scale(1)`;
+  }
+
+  function showBubbleCursor(button, event) {
+    if (!button.closest(".shoot-section")) return;
+
+    hoverBubble = button;
+    const cursor = getBubbleCursor();
+    cursor.classList.add("is-visible");
+    moveBubbleCursor(event);
+  }
+
+  function hideBubbleCursor(button) {
+    if (button && hoverBubble !== button) return;
+
+    hoverBubble = null;
+    if (bubbleCursor) {
+      bubbleCursor.classList.remove("is-visible");
+      bubbleCursor.style.transform = "translate3d(-999px, -999px, 0) rotate(-4deg) scale(.88)";
+    }
+  }
+
+  function makePopSparks(clientX, clientY) {
+    if (typeof clientX !== "number" || typeof clientY !== "number") return;
+
+    const count = 10;
+    for (let i = 0; i < count; i += 1) {
+      const spark = document.createElement("span");
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.34;
+      const distance = 42 + Math.random() * 44;
+      spark.className = "opcamp-pop-spark";
+      spark.style.left = `${clientX}px`;
+      spark.style.top = `${clientY}px`;
+      spark.style.setProperty("--spark-x", `${Math.cos(angle) * distance}px`);
+      spark.style.setProperty("--spark-y", `${Math.sin(angle) * distance}px`);
+      document.body.appendChild(spark);
+      window.setTimeout(() => spark.remove(), 700);
+    }
+  }
+
+  function bindBubbleHover(button) {
+    if (button.dataset.opcampHoverBound === "true") return;
+    button.dataset.opcampHoverBound = "true";
+
+    button.addEventListener("pointerenter", event => showBubbleCursor(button, event));
+    button.addEventListener("pointermove", moveBubbleCursor);
+    button.addEventListener("pointerleave", () => hideBubbleCursor(button));
+    button.addEventListener("focus", event => showBubbleCursor(button, event));
+    button.addEventListener("blur", () => hideBubbleCursor(button));
+    button.addEventListener("click", event => {
+      markBubbleHit(button, event);
+    });
+  }
+
+  function bindShootHover() {
+    document.querySelectorAll(".shoot-section .float-bubble").forEach(bindBubbleHover);
+  }
+
   document.addEventListener("DOMContentLoaded", bindAllBubbles);
+  document.addEventListener("DOMContentLoaded", bindShootHover);
   document.addEventListener("click", handlePointActivation, true);
   document.addEventListener("pointerup", handlePointActivation, true);
   document.addEventListener("touchend", handlePointActivation, true);
@@ -142,6 +230,9 @@
   window.addEventListener("pointerup", handlePointActivation, true);
   window.addEventListener("touchend", handlePointActivation, true);
 
-  const observer = new MutationObserver(bindAllBubbles);
+  const observer = new MutationObserver(function () {
+    bindAllBubbles();
+    bindShootHover();
+  });
   observer.observe(document.documentElement, { childList: true, subtree: true });
 })();
