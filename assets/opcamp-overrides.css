@@ -3,6 +3,56 @@ html {
   scroll-padding-top: 24px;
 }
 
+/* Keep the main site copy above the animated image layers. */
+.hero-section {
+  isolation: isolate !important;
+}
+
+.hero-section .hero-photo {
+  z-index: 0 !important;
+}
+
+.hero-section .sky-film {
+  z-index: 1 !important;
+}
+
+.hero-section .hero-copy,
+.hero-section .dictionary,
+.hero-section .scroll-mark {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 20 !important;
+  transform: none !important;
+}
+
+.hero-section .dictionary,
+.hero-section .scroll-mark {
+  position: absolute !important;
+}
+
+.hero-section .hero-copy *,
+.hero-section .dictionary *,
+.hero-section .scroll-mark {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.hero-section .hero-copy h1,
+.hero-section .hero-copy h2 {
+  color: #f8fbfa !important;
+}
+
+.hero-section .hero-copy p,
+.hero-section .topline,
+.hero-section .mono-line,
+.hero-section .dictionary,
+.hero-section .dictionary p,
+.hero-section .scroll-mark {
+  color: rgba(237, 246, 249, .9) !important;
+}
+
 .opcamp {
   background: #071522;
 }
