@@ -114,6 +114,11 @@ html {
   mix-blend-mode: screen;
 }
 
+.gate-screen::before,
+.gate-screen::after {
+  display: none !important;
+}
+
 .gate-screen::after,
 .guide-screen::after,
 .shoot-section::after {
@@ -151,24 +156,20 @@ html {
 }
 
 .bubble-wand {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
   width: clamp(190px, 24vw, 280px) !important;
   height: clamp(170px, 21vw, 246px) !important;
   border: 0 !important;
   background: url("/images/bubble-wand-icon.png") center / contain no-repeat !important;
-  filter: drop-shadow(0 24px 48px rgba(1, 10, 20, .46)) drop-shadow(0 0 28px rgba(186, 238, 255, .36));
+  filter: saturate(.82) brightness(1.04) opacity(.92) drop-shadow(0 24px 48px rgba(1, 10, 20, .44)) drop-shadow(0 0 22px rgba(186, 238, 255, .24));
   transform-origin: 42% 78%;
   animation: opcampWandFloat 3.8s ease-in-out infinite;
 }
 
 .bubble-wand::before {
-  content: "";
-  position: absolute;
-  inset: 12%;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(220, 251, 255, .42), transparent 62%);
-  filter: blur(18px);
-  opacity: .9;
-  z-index: -1;
+  display: none !important;
 }
 
 .bubble-wand::after {
@@ -192,7 +193,69 @@ html {
 
 .wand-ring,
 .wand-stick {
-  display: none !important;
+  position: absolute !important;
+  display: block !important;
+  pointer-events: none !important;
+  border: 1px solid rgba(218, 244, 251, .28) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.wand-ring {
+  width: clamp(210px, 28vw, 340px) !important;
+  height: clamp(82px, 11vw, 128px) !important;
+  left: 46% !important;
+  top: 16% !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  border-radius: 55% 45% 0 0 / 100% 100% 0 0 !important;
+  transform: translateX(-50%) rotate(-15deg) !important;
+}
+
+.wand-ring::before,
+.wand-ring::after,
+.wand-stick::before {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, .9), transparent 18%),
+    radial-gradient(circle, rgba(178, 229, 242, .24), transparent 62%);
+  border: 1px solid rgba(223, 249, 255, .5);
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, .18), 0 0 24px rgba(188, 240, 255, .2);
+}
+
+.wand-ring::before {
+  width: 18px;
+  height: 18px;
+  right: 13%;
+  top: -12px;
+}
+
+.wand-ring::after {
+  width: 12px;
+  height: 12px;
+  right: 2%;
+  top: 18px;
+}
+
+.wand-stick {
+  width: clamp(160px, 24vw, 280px) !important;
+  height: clamp(74px, 9vw, 112px) !important;
+  left: 52% !important;
+  top: 27% !important;
+  border-top-color: transparent !important;
+  border-left-color: transparent !important;
+  border-radius: 0 0 55% 45% / 0 0 100% 100% !important;
+  transform: translateX(-50%) rotate(-16deg) !important;
+  opacity: .9 !important;
+}
+
+.wand-stick::before {
+  width: 10px;
+  height: 10px;
+  right: 24%;
+  bottom: -6px;
 }
 
 .wand-hint {
@@ -218,6 +281,53 @@ html {
   height: 1px;
   margin: 12px auto 0;
   background: linear-gradient(90deg, transparent, rgba(229, 250, 255, .78), transparent);
+}
+
+.hero-bubble-layer {
+  display: none !important;
+}
+
+.keyword-row[aria-hidden="true"] {
+  display: none !important;
+}
+
+.opcamp-keyword-statement {
+  position: relative;
+  z-index: 6;
+  width: min(980px, 82vw);
+  margin: clamp(28px, 6vw, 72px) auto 0;
+  padding-left: clamp(18px, 3vw, 34px);
+  border-left: 1px solid rgba(226, 247, 255, .36);
+}
+
+.keyword-statement-subtitles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px clamp(18px, 3vw, 34px);
+  color: rgba(224, 244, 250, .9);
+  font-family: "Noto Serif SC", serif;
+  font-size: clamp(1.25rem, 2.1vw, 2rem);
+  letter-spacing: .04em;
+  text-shadow: 0 10px 30px rgba(1, 7, 14, .62);
+}
+
+.keyword-statement-body {
+  max-width: 54em;
+  margin-top: clamp(24px, 4vw, 42px);
+  color: rgba(237, 246, 249, .82) !important;
+  font-size: clamp(1rem, 1.25vw, 1.22rem) !important;
+  line-height: 2 !important;
+  text-wrap: pretty;
+}
+
+.keyword-section .section-head {
+  max-width: min(1120px, 88vw) !important;
+}
+
+.keyword-section .section-head h2 {
+  max-width: 11em !important;
+  font-size: clamp(3rem, 7vw, 7.2rem) !important;
+  line-height: .98 !important;
 }
 
 .blown-bubbles span,
@@ -360,10 +470,10 @@ html {
 
 @keyframes opcampWandFloat {
   0%, 100% {
-    transform: translateY(0) rotate(-3deg);
+    transform: translate(-50%, -50%) translateY(0) rotate(-3deg);
   }
   50% {
-    transform: translateY(-12px) rotate(2deg);
+    transform: translate(-50%, -50%) translateY(-10px) rotate(2deg);
   }
 }
 
@@ -503,6 +613,21 @@ html {
     overflow: visible !important;
   }
 
+  .opcamp-keyword-statement {
+    width: auto;
+    margin-top: 32px;
+    padding-left: 18px;
+  }
+
+  .keyword-section .section-head h2 {
+    font-size: clamp(2.25rem, 11vw, 4rem) !important;
+  }
+
+  .keyword-statement-subtitles {
+    display: grid;
+    gap: 12px;
+  }
+
   .keyword-card,
   .npc-grid article,
   .review-strip article,
@@ -540,6 +665,7 @@ html {
   .bubble-wand {
     width: min(68vw, 240px) !important;
     height: min(58vw, 210px) !important;
+    top: 48% !important;
   }
 
   .wand-hint {
