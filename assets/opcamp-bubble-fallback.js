@@ -221,6 +221,56 @@
     document.querySelectorAll(".shoot-section .float-bubble").forEach(bindBubbleHover);
   }
 
+  function enterSiteFromGuide() {
+    const guide = document.querySelector(".guide-screen");
+    if (!guide || document.querySelector(".hero-section")) return false;
+
+    const enterButton = guide.querySelector(".site-button.primary");
+    if (!enterButton) return false;
+
+    enterButton.dispatchEvent(new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+      view: window
+    }));
+    return true;
+  }
+
+  function bindGuideEnterFallback() {
+    const guide = document.querySelector(".guide-screen");
+    if (!guide || guide.dataset.opcampGuideEnterBound === "true") return;
+
+    guide.dataset.opcampGuideEnterBound = "true";
+    let touchStartY = null;
+
+    guide.addEventListener("wheel", event => {
+      if (event.deltaY <= 8) return;
+      event.preventDefault();
+      enterSiteFromGuide();
+    }, { passive: false });
+
+    guide.addEventListener("touchstart", event => {
+      touchStartY = event.touches?.[0]?.clientY ?? null;
+    }, { passive: true });
+
+    guide.addEventListener("touchmove", event => {
+      if (touchStartY === null) return;
+      const currentY = event.touches?.[0]?.clientY;
+      if (typeof currentY !== "number" || touchStartY - currentY <= 24) return;
+      event.preventDefault();
+      touchStartY = null;
+      enterSiteFromGuide();
+    }, { passive: false });
+  }
+
+  function handleGuideKey(event) {
+    if (!document.querySelector(".guide-screen") || document.querySelector(".hero-section")) return;
+    if (!["ArrowDown", "PageDown", " ", "Enter"].includes(event.key)) return;
+
+    event.preventDefault();
+    enterSiteFromGuide();
+  }
+
   const copy = {
     onboarding: {
       marker: "// ONBOARDING",
@@ -459,10 +509,12 @@
 
   document.addEventListener("DOMContentLoaded", bindAllBubbles);
   document.addEventListener("DOMContentLoaded", bindShootHover);
+  document.addEventListener("DOMContentLoaded", bindGuideEnterFallback);
   document.addEventListener("DOMContentLoaded", applyCopyUpdates);
   document.addEventListener("click", handlePointActivation, true);
   document.addEventListener("pointerup", handlePointActivation, true);
   document.addEventListener("touchend", handlePointActivation, true);
+  document.addEventListener("keydown", handleGuideKey);
   window.addEventListener("click", handlePointActivation, true);
   window.addEventListener("pointerup", handlePointActivation, true);
   window.addEventListener("touchend", handlePointActivation, true);
@@ -470,6 +522,7 @@
   const observer = new MutationObserver(function () {
     bindAllBubbles();
     bindShootHover();
+    bindGuideEnterFallback();
     applyCopyUpdates();
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
