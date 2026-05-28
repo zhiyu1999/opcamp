@@ -245,37 +245,36 @@
     },
     timeline: [
       {
-        title: "Day 1 · 中午｜在地漫游与破冰",
+        title: "Day 1",
         rows: [
-          ["13:00", "数栖湾集合，漫游玉鸟集周边"],
-          ["14:20", "良渚在地介绍（大雄）& 三方分享：Artist 分享黑客松经验，Victor 分享 OPC 流量逻辑，Rona 分享空间 / 产品即生活方式"],
-          ["15:30", "桌游破冰，自主分组"],
-          ["16:00", "前往汤泉，自由泡汤"],
-          ["18:30", "集体晚餐；19:30 项目开发启动"],
-          ["24:00", "强制休息，不熬夜"]
+          ["13:20", "数栖湾集合"],
+          ["13:30", "活动介绍与数栖湾介绍"],
+          ["14:00", "前往汤泉"],
+          ["14:30", "游览汤泉乐园"],
+          ["15:20", "自我介绍与破冰环节"],
+          ["16:30", "分组并提交小组协调员名单"],
+          ["16:40", "自由开发"],
+          ["24:00", "熄灯休息（不提倡熬夜）"]
         ]
       },
       {
-        title: "Day 2 · 清晨到傍晚",
+        title: "Day 2",
         rows: [
-          ["08:00", "早餐"],
-          ["08:30", "集体八段锦。带领大家打金刚功和长寿功，让身体也参与到创造里。"],
-          ["09:00", "私汤浸泡，继续需求对齐"],
-          ["12:00", "午餐"],
-          ["14:00", "退房，返回数栖湾，继续项目冲刺"],
-          ["17:00", "项目路演，每组 5–10 分钟；18:00 正式开始团建"]
+          ["9:00", "集体金刚功"],
+          ["14:00", "离开汤泉，返回数栖湾"],
+          ["17:00", "项目路演"],
+          ["18:00", "自愿参加晚餐团建"]
         ]
       }
     ],
-    rhythmNote: "一群在 AI 时代真正在做事的人，每周在汤泉聚一次，泡 48 小时。都在比「更快」的时代，「亲自然」「长期主义」「价值投资」这样的长线价值观会慢慢回归到人的视野。新一期投入更多的精力聚焦在产品上，一起在非标的道场，做「有回旋镖」的产品。",
+    rhythmTitle: "汤泉 OPCamp，隔周一期。",
+    rhythmNote: "一群在 AI 时代真正在做事的人，隔周在汤泉聚一次，泡 48 小时。都在比「更快」的时代，「亲自然」「长期主义」「价值投资」这样的长线价值观会慢慢回归到人的视野。新一期投入更多的精力聚焦在产品上，一起在非标的道场，做「有回旋镖」的产品。",
+    eventTopline: "// V02    2026 · 5.30 - 5.31    杭州 · 良渚澜悦汤泉",
     info: [
-      ["时间", "5 月 16 日 – 5 月 17 日（两天一夜，含汤泉门票）"],
-      ["地点", "良渚汤泉（驻扎与创造）→ 数栖湾（最终 Demo）"],
-      ["全程票", "288 元 / 人"],
-      ["早鸟票", "188 元 / 人（限 3 人，技术开发者享受）"],
-      ["围观票", "188 元 / 人（任选一天）"],
-      ["过夜", "汤泉包含过夜。困了就睡，醒了就接着做。"],
-      ["餐食", "不含，会有集体觅食，由良渚本地朋友带路，去那些「不带你你大概率找不到」的小馆子。"]
+      ["活动时间", "5月30日-5月31日（两天一夜）"],
+      ["集合地点", "数栖湾AI+产业社区"],
+      ["汤泉地点", "良渚澜悦汤泉"],
+      ["全程票价", "288元（周四报名减免40）"]
     ],
     npcs: [
       ["三寿", "玄学内容出海", "AI 产品经理，专注于企业 ERP 信息化与数字化建设，并长期进行寺院道观田野调查，关注 AI 产品与技术商业化，分享玄学反诈与行业观察。"],
@@ -335,6 +334,7 @@
 
     const app = document.querySelector(".opcamp");
     if (!app || document.querySelector(".gate-screen") || document.querySelector(".guide-screen")) return;
+    if (document.querySelector(".hero-section")) return;
 
     const heroText = document.querySelector(".hero-copy")?.textContent || "";
     if (heroText.includes("松弛是一种生产力")) return;
@@ -344,7 +344,7 @@
     fallback.innerHTML = `
       <section class="static-hero" id="top">
         <div class="static-hero-copy">
-          <p class="topline">// V02    2026 · 5.17 - 5.18    杭州 · 良渚汤泉</p>
+          <p class="topline">${copy.eventTopline}</p>
           <h1>松弛是一种生产力，<br><span>要[健康的]创造。</span></h1>
           <h2>剥离泡沫，泡进生活。</h2>
           <p>在松弛的空间里做有意思的创造。良渚汤泉 · 48 小时 · 关于空间、AI 产品与生活方式的实验。</p>
@@ -401,7 +401,7 @@
       </section>
       <section class="section rhythm-section">
         <div class="section-grid">
-          <div><p class="marker">N°.05</p><h2>汤泉 OPCamp，每周一期。</h2><p class="section-note">${copy.rhythmNote}</p></div>
+          <div><p class="marker">N°.05</p><h2>${copy.rhythmTitle}</h2><p class="section-note">${copy.rhythmNote}</p></div>
           <div class="info-table">${copy.info.map(row => `<div><span>${row[0]}</span><p>${row[1]}</p></div>`).join("")}</div>
         </div>
         <div class="npc-grid">${copy.npcs.map((npc, index) => `<article><span class="marker">NPC 0${index + 1}</span><h3>${npc[0]}</h3><p class="kicker">${npc[1]}</p><p>${npc[2]}</p></article>`).join("")}</div>
@@ -446,6 +446,32 @@
     });
   }
 
+  function syncKeyValueRows(container, items, startIndex = 0) {
+    if (!container) return;
+
+    items.forEach((item, index) => {
+      let row = container.children[index + startIndex];
+      if (!row) {
+        row = document.createElement("div");
+        row.appendChild(document.createElement("span"));
+        row.appendChild(document.createElement("p"));
+        container.appendChild(row);
+      }
+
+      setText(row.querySelector("span"), item[0]);
+      setText(row.querySelector("p"), item[1]);
+    });
+
+    Array.from(container.children).slice(items.length + startIndex).forEach(row => row.remove());
+  }
+
+  function syncTimelineGroup(group, item) {
+    if (!group || !item) return;
+
+    setText(group.querySelector("h3"), item.title);
+    syncKeyValueRows(group, item.rows, 1);
+  }
+
   function updateReview() {
     const activeText = document.querySelector(".review-section .tab-row button.active")?.textContent?.trim();
     const items = activeText === "项目作品" ? copy.reviewProjects : copy.reviewPeople;
@@ -470,6 +496,8 @@
   }
 
   function applyCopyUpdates() {
+    setText(document.querySelector(".hero-copy .topline"), copy.eventTopline);
+
     const guide = document.querySelector(".guide-panel");
     if (guide) {
       setText(guide.querySelector(".marker"), copy.onboarding.marker);
@@ -516,21 +544,11 @@
       setText(statement.querySelector(".keyword-statement-body"), copy.keywordStatement.body);
     }
 
-    updateCards(".timeline-group", copy.timeline, (group, item) => {
-      setText(group.querySelector("h3"), item.title);
-      group.querySelectorAll(":scope > div").forEach((row, rowIndex) => {
-        const rowItem = item.rows[rowIndex];
-        if (!rowItem) return;
-        setText(row.querySelector("span"), rowItem[0]);
-        setText(row.querySelector("p"), rowItem[1]);
-      });
-    });
+    updateCards(".timeline-group", copy.timeline, syncTimelineGroup);
 
+    setText(document.querySelector(".rhythm-section h2"), copy.rhythmTitle);
     setText(document.querySelector(".rhythm-section .section-note"), copy.rhythmNote);
-    updateCards(".info-table > div", copy.info, (row, item) => {
-      setText(row.querySelector("span"), item[0]);
-      setText(row.querySelector("p"), item[1]);
-    });
+    syncKeyValueRows(document.querySelector(".info-table"), copy.info);
 
     updateCards(".npc-grid article", copy.npcs, (article, item, index) => {
       setText(article.querySelector(".marker"), `NPC 0${index + 1}`);
@@ -564,7 +582,7 @@
     }
 
     updateModalCopy();
-    window.setTimeout(renderSiteFallback, 900);
+    scheduleSiteFallback();
   }
 
   document.addEventListener("DOMContentLoaded", bindAllBubbles);
@@ -577,10 +595,31 @@
   window.addEventListener("pointerup", handlePointActivation, true);
   window.addEventListener("touchend", handlePointActivation, true);
 
-  const observer = new MutationObserver(function () {
-    bindAllBubbles();
-    bindShootHover();
-    applyCopyUpdates();
-  });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  let updateQueued = false;
+  let fallbackTimer = 0;
+
+  function scheduleSiteFallback() {
+    if (fallbackTimer || document.querySelector(".opcamp-static-site")) return;
+
+    fallbackTimer = window.setTimeout(function () {
+      fallbackTimer = 0;
+      renderSiteFallback();
+    }, 900);
+  }
+
+  function scheduleDomUpdates() {
+    if (updateQueued) return;
+
+    updateQueued = true;
+    window.requestAnimationFrame(function () {
+      updateQueued = false;
+      bindAllBubbles();
+      bindShootHover();
+      applyCopyUpdates();
+    });
+  }
+
+  const observer = new MutationObserver(scheduleDomUpdates);
+  const observerRoot = document.getElementById("root") || document.documentElement;
+  observer.observe(observerRoot, { childList: true, subtree: true });
 })();
