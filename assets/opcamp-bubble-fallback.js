@@ -330,6 +330,115 @@
     if (node && node.getAttribute("src") !== src) node.setAttribute("src", src);
   }
 
+  function renderSiteFallback() {
+    if (document.querySelector(".opcamp-static-site")) return;
+
+    const app = document.querySelector(".opcamp");
+    if (!app || document.querySelector(".gate-screen") || document.querySelector(".guide-screen")) return;
+
+    const heroText = document.querySelector(".hero-copy")?.textContent || "";
+    if (heroText.includes("松弛是一种生产力")) return;
+
+    const fallback = document.createElement("div");
+    fallback.className = "opcamp-static-site";
+    fallback.innerHTML = `
+      <section class="static-hero" id="top">
+        <div class="static-hero-copy">
+          <p class="topline">// V02    2026 · 5.17 - 5.18    杭州 · 良渚汤泉</p>
+          <h1>松弛是一种生产力，<br><span>要[健康的]创造。</span></h1>
+          <h2>剥离泡沫，泡进生活。</h2>
+          <p>在松弛的空间里做有意思的创造。良渚汤泉 · 48 小时 · 关于空间、AI 产品与生活方式的实验。</p>
+          <p class="mono-line">A GATHERING OF OPCs | 48 HOURS OF NOT BEING NPC</p>
+          <div class="button-row">
+            <a class="site-button primary" href="#signup">报名下一期</a>
+            <a class="site-button" href="#review">看看上期都发生了什么</a>
+          </div>
+        </div>
+        <aside class="dictionary">
+          <span>泡 / pao /</span>
+          <p><b>v.</b> to soak; to immerse oneself fully. 把自己交给当下</p>
+          <p><b>n.</b> a bubble; something fragile, fleeting. 易碎，转瞬即逝</p>
+        </aside>
+      </section>
+      <section class="section about-section" id="about">
+        <div class="section-grid">
+          <div><p class="marker">N°.01</p><h2>关于汤泉 OPCamp</h2></div>
+          <div class="long-copy">
+            ${copy.about.map((text, index) => `<p class="${index === 0 ? "lead" : ""}">${text}</p>`).join("")}
+          </div>
+        </div>
+      </section>
+      <section class="keyword-section">
+        <div class="section-head">
+          <p class="marker">N°.02 / PRODUCT FIELD</p>
+          <h2>${copy.keywordStatement.title}</h2>
+        </div>
+        <div class="opcamp-keyword-statement">
+          <div class="keyword-statement-subtitles">${copy.keywordStatement.subtitles.map(item => `<p>·${item}</p>`).join("")}</div>
+          <p class="keyword-statement-body">${copy.keywordStatement.body}</p>
+        </div>
+      </section>
+      <section class="shoot-section">
+        <div class="section-head">
+          <p class="marker">N°.03 / BUBBLE SHOOT</p>
+          <h2>拿起泡泡枪，打碎泡沫看见细节</h2>
+          <p class="section-note">点击任意泡泡，打开对应的内容说明。</p>
+        </div>
+        <div class="bubble-arena static-bubble-arena">
+          ${bubbles.map((bubble, index) => {
+            const size = 116 + (index % 3) * 18;
+            return `<button class="float-bubble field" style="left:${18 + index * 16}%;top:${index % 2 ? 36 : 58}%;width:${size}px;height:${size}px;margin-left:${-size / 2}px;margin-top:${-size / 2}px"><span>${bubble.title}</span></button>`;
+          }).join("")}
+        </div>
+      </section>
+      <section class="section timeline-section">
+        <div class="section-grid">
+          <div><p class="marker">N°.04</p><h2>48 小时怎么过</h2><p class="section-note">留白也是这次「泡」的一部分。我们不会把流程排得太满。</p></div>
+          <div class="timeline-wrap">
+            ${copy.timeline.map(group => `<article class="timeline-group"><h3>${group.title}</h3>${group.rows.map(row => `<div><span>${row[0]}</span><p>${row[1]}</p></div>`).join("")}</article>`).join("")}
+          </div>
+        </div>
+      </section>
+      <section class="section rhythm-section">
+        <div class="section-grid">
+          <div><p class="marker">N°.05</p><h2>汤泉 OPCamp，每周一期。</h2><p class="section-note">${copy.rhythmNote}</p></div>
+          <div class="info-table">${copy.info.map(row => `<div><span>${row[0]}</span><p>${row[1]}</p></div>`).join("")}</div>
+        </div>
+        <div class="npc-grid">${copy.npcs.map((npc, index) => `<article><span class="marker">NPC 0${index + 1}</span><h3>${npc[0]}</h3><p class="kicker">${npc[1]}</p><p>${npc[2]}</p></article>`).join("")}</div>
+      </section>
+      <section class="photo-break">
+        <div class="quiet-copy-wrap"><p class="quiet-manifesto">${copy.quiet}</p></div>
+      </section>
+      <section class="section review-section" id="review">
+        <div class="section-head"><p class="marker">N°.06 / REVIEW</p><h2>往期回顾</h2></div>
+        <div class="review-strip">${copy.reviewPeople.map((item, index) => `<article><span class="marker">0${index + 1}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join("")}</div>
+        <blockquote>AI 让「怎么做」很快就能出来 base demo，但「为什么而做」是只有人和人才能碰撞出来的核心。</blockquote>
+      </section>
+      <section class="audience-section">
+        <h2>${copy.audience.title}</h2>
+        <div>${copy.audience.rows.map((row, index) => `<article><span>N°.0${index + 1}</span><p>${row}</p></article>`).join("")}</div>
+      </section>
+      <footer class="footer-section" id="signup">
+        <img src="/images/bg-giant-bubble.png" alt="">
+        <div>
+          <p class="marker">N°.08 / SIGNUP</p>
+          <h2>${copy.footer.title}</h2>
+          <p>${copy.footer.body}</p>
+          <div class="join-grid">${copy.footer.join.map((item, index) => `<article><span>0${index + 1}</span><h3>${item[0]}</h3><p>${item[1]}</p></article>`).join("")}</div>
+          <div class="button-row centered">
+            <a class="site-button primary" href="https://hcn9m5eta0s5.feishu.cn/share/base/form/shrcnf03FAZqhlNjgvKGUrkmuuf">${copy.footer.buttons[0]}</a>
+            <a class="site-button" href="https://hcn9m5eta0s5.feishu.cn/share/base/form/shrcnf03FAZqhlNjgvKGUrkmuuf">${copy.footer.buttons[1]}</a>
+          </div>
+          <p class="partners">${copy.footer.partners}</p>
+          <p class="copyright">© 2026 汤泉 OPCamp · LIANGZHU</p>
+        </div>
+      </footer>
+    `;
+    app.appendChild(fallback);
+    bindAllBubbles();
+    bindShootHover();
+  }
+
   function updateCards(selector, items, updater) {
     document.querySelectorAll(selector).forEach((node, index) => {
       const item = items[index];
@@ -455,6 +564,7 @@
     }
 
     updateModalCopy();
+    window.setTimeout(renderSiteFallback, 900);
   }
 
   document.addEventListener("DOMContentLoaded", bindAllBubbles);
